@@ -49,6 +49,7 @@ export class RpgCharacter extends DDDSuper(I18NMixin(LitElement)) {
       items: { type: Array },
       organization: { type: String },
       repository: { type: String },
+      limit: { type: Number },
     };
   }
 
@@ -70,6 +71,19 @@ export class RpgCharacter extends DDDSuper(I18NMixin(LitElement)) {
         font-size: var(--rpg-character-label-font-size, var(--ddd-font-size-s));
       }
     `];
+  }
+
+  getData() {
+    const url = `https://api.github.com/repos/${this.organization}/${this.repository}/contributors`;
+    try{
+      fetch(url).then(d => d.ok ? d.json(): {}).then(data => {
+        if (data) {
+  
+          this.items = [data];
+          console.log(this.items);
+        }  
+      }
+    }
   }
 
   // Lit render the HTML
@@ -95,6 +109,7 @@ export class RpgCharacter extends DDDSuper(I18NMixin(LitElement)) {
   
   // life cycle will run when anything defined in `properties` is modified
   updated(changedProperties) {
+    super.updated(changedProperties);
     // see if value changes from user input and is not empty
     //if (changedProperties.has('organization')) {
      // this.updateResults();
